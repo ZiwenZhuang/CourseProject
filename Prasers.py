@@ -300,7 +300,7 @@ class MainRanker():
                                    )
 
         # display and return the answer
-        print('max frequency: ' + str(sorted_freq_words[0][1]))
+        print('Applying bag-of-words and stemming and stopword removal with max frequency: ' + str(sorted_freq_words[0][1]))
         if mywill_plot:
             freq_words.plot(myhottest)
 
@@ -326,13 +326,6 @@ class MainRanker():
         freq_words = nltk.FreqDist()
         # use for count the idf of each term
         word_idf = defaultdict(lambda: 0)
-<<<<<<< HEAD
-=======
-        for i in range(self.num_files):
-            # add samples in the file
-
-            words = self.extract_words(self.gen_filename(self.filename_main, i))
->>>>>>> 50af4b2f418d3c16ea9e80e6a8a6820d37bab142
 
         if self.filename_main == 'all':
             files = os.listdir('./data')
@@ -386,7 +379,7 @@ class MainRanker():
                                    )
 
         # display and return the answer
-        print('max frequency: ' + str(sorted_freq_words[0][1]))
+        print('Applying bag-of-words and stemming and stopword removal with max frequency: ' + str(sorted_freq_words[0][1]))
         if mywill_plot:
             freq_words.plot(myhottest)
 
