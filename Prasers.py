@@ -251,3 +251,67 @@ class MainRanker():
             freq_words.plot(myhottest)
 
         return sorted_freq_words[:myhottest]
+
+    def tfidf_POS_rank(self, focus, mywill_plot= None, myhottest= None, stemmer_name= 'Porter', para= None, to_remove= []):
+        '''
+            Based on the previous counting method, adding tf-idf method to rank the importance of words
+            to_remove: you specifies words that you expelicitly don't want to be counted, they does not include stop words
+            focus: you have to provide a list that contains the tag that you are interested in.
+        '''
+        # prase the arguments for this method
+        if mywill_plot == None:
+            mywill_plot = self.will_plot
+        if myhottest == None:
+            myhottest = self.hottest
+
+
+        # generate a frequency dictionary for all tokens not in stopwords
+        # and use stemmer to stem the word in each document
+        stopwords = nltk.corpus.stopwords.words('english')
+        stemmer = eval('nltk.' + stemmer_name + 'Stemmer(' +  para + ')')
+        freq_words = nltk.FreqDist()
+        # use for count the idf of each term
+        word_idf = defaultdict(lambda: 0)
+        for i in range(self.num_files):
+            # add samples in the file
+            words = self.extract_words(self.filename_main + str(i) + '.txt')
+
+            temp = [w for w in words if (not w in stopwords)]
+            to_add = [stemmer.stem(w) for w in temp]
+            to_add = [w for w in to_add if not w in to_remove]
+
+            with_tags = nltk.pos_tag(to_add)
+            to_add = [w for (w, t) in with_tags if t in focus]
+
+            word_set = set(to_add)
+            freq_words.update(to_add)
+
+            # set the idf
+            for word in word_set:
+                word_idf[word] += 1
+                
+        # Calculate the idf of each word
+        for word in freq_words.keys():
+            word_idf[word] = math.log(self.num_files / float(1 + word_idf[word]))
+
+        # update frequency list with tf idf
+        for word in freq_words.keys():
+            freq_words[word] *= word_idf[word]
+
+        # sort the frequency list in decending order
+        sorted_freq_words = sorted(freq_words.items(),\
+                                    key = lambda k:k[1],\
+                                    reverse = True
+                                   )
+
+        # display and return the answer
+        print('Applying bag-of-words and stemming and stopword removal with max frequency: ' + str(sorted_freq_words[0][1]))
+        if mywill_plot:
+            freq_words.plot(myhottest)
+
+        return sorted_freq_words[:myhottest]
+
+class DocSelector():
+    '''
+        This object performs the function to find the document
+    '''
