@@ -22,6 +22,10 @@ class MainRanker():
         self.will_plot = will_plot
         self.hottest = hottest # specify the number of hottest topic returned by the ranker
 
+    def gen_filename(self, filename_main, i)->str:
+        # Index 'i' should start from 0
+        return filename_main + ' (' + str(i+1) + ').txt'
+
     def extract_words(self, filename, will_lower= True)->list:
         '''
             This method returns a list of words from the specific file
@@ -61,7 +65,7 @@ class MainRanker():
         freq_words = nltk.FreqDist()
         for i in range(self.num_files):
             # add samples in the file
-            freq_words.update( self.extract_words(self.filename_main + str(i) + '.txt') )
+            freq_words.update( self.extract_words(self.gen_filename(self.filename_main, i)) )
 
         # sort the frequency list in decending order
         sorted_freq_words = sorted(freq_words.items(),\
@@ -97,7 +101,7 @@ class MainRanker():
         freq_words = nltk.FreqDist()
         for i in range(self.num_files):
             # add samples in the file
-            words = self.extract_words(self.filename_main + str(i) + '.txt')
+            words = self.extract_words(self.gen_filename(self.filename_main, i))
             temp = [w for w in words if (not w in stopwords)]
             freq_words.update([stemmer.stem(w) for w in temp])
 
@@ -137,7 +141,7 @@ class MainRanker():
         freq_words = nltk.FreqDist()
         for i in range(self.num_files):
             # add samples in the file
-            words = self.extract_words(self.filename_main + str(i) + '.txt', False)
+            words = self.extract_words(self.gen_filename(self.filename_main, i), False)
             temp = [w for w in words if (not w in stopwords)]
             stemmed = [stemmer.stem(w) for w in temp]
             with_tags = nltk.pos_tag(stemmed)
@@ -177,7 +181,7 @@ class MainRanker():
         freq_words = nltk.FreqDist()
         for i in range(self.num_files):
             # add samples in the file
-            words = self.extract_words(self.filename_main + str(i) + '.txt')
+            words = self.extract_words(self.gen_filename(self.filename_main, i))
             words += ngrams(words, n)
             temp = [w for w in words if (not w in stopwords)]
             stemmed = [stemmer.stem(w) for w in temp]
@@ -219,7 +223,7 @@ class MainRanker():
         word_idf = defaultdict(lambda: 0)
         for i in range(self.num_files):
             # add samples in the file
-            words = self.extract_words(self.filename_main + str(i) + '.txt')
+            words = self.extract_words(self.gen_filename(self.filename_main, i))
 
             temp = [w for w in words if (not w in stopwords)]
             to_add = [stemmer.stem(w) for w in temp]
@@ -274,7 +278,7 @@ class MainRanker():
         word_idf = defaultdict(lambda: 0)
         for i in range(self.num_files):
             # add samples in the file
-            words = self.extract_words(self.filename_main + str(i) + '.txt')
+            words = self.extract_words(self.gen_filename(self.filename_main, i))
 
             temp = [w for w in words if (not w in stopwords)]
             to_add = [stemmer.stem(w) for w in temp]
@@ -315,3 +319,5 @@ class DocSelector():
     '''
         This object performs the function to find the document
     '''
+    def __init__(self):
+        pass

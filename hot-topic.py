@@ -18,7 +18,7 @@ if __name__ == '__main__':
     #spider = TheGuardianSpider()
     #spider.start('./data/TheGuardian')
 
-    ranker = MainRanker('./data/USnews', 20, True)
+    ranker = MainRanker('./data/crawled', 748, True)
     #print(ranker.simple_BOW_rank())
     #print(ranker.BOW_stem_stop_rank())
     #print(ranker.POS_rank('NP'))
