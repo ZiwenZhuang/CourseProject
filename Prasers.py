@@ -1,3 +1,4 @@
+import os
 import nltk
 from nltk.util import ngrams
 from collections import defaultdict
@@ -63,9 +64,14 @@ class MainRanker():
 
         # generate a frequency dictionary for all tokens
         freq_words = nltk.FreqDist()
-        for i in range(self.num_files):
-            # add samples in the file
-            freq_words.update( self.extract_words(self.gen_filename(self.filename_main, i)) )
+        if self.filename_main == 'all':
+            files = os.listdir('./data')
+            for i in files:
+                freq_words.update( self.extract_words('./data/' + i) )
+        else:
+            for i in range(self.num_files):
+                # add samples in the file
+                freq_words.update( self.extract_words(self.gen_filename(self.filename_main, i)) )
 
         # sort the frequency list in decending order
         sorted_freq_words = sorted(freq_words.items(),\
@@ -99,11 +105,18 @@ class MainRanker():
         stopwords = nltk.corpus.stopwords.words('english')
         stemmer = eval('nltk.' + stemmer_name + 'Stemmer()')
         freq_words = nltk.FreqDist()
-        for i in range(self.num_files):
-            # add samples in the file
-            words = self.extract_words(self.gen_filename(self.filename_main, i))
-            temp = [w for w in words if (not w in stopwords)]
-            freq_words.update([stemmer.stem(w) for w in temp])
+        if self.filename_main == 'all':
+            files = os.listdir('./data')
+            for i in files:
+                words = self.extract_words('./data/' + i)
+                temp = [w for w in words if (not w in stopwords)]
+                freq_words.update([stemmer.stem(w) for w in temp])
+        else:
+            for i in range(self.num_files):
+                # add samples in the file
+                words = self.extract_words(self.gen_filename(self.filename_main, i))
+                temp = [w for w in words if (not w in stopwords)]
+                freq_words.update([stemmer.stem(w) for w in temp])
 
         # sort the frequency list in decending order
         sorted_freq_words = sorted(freq_words.items(),\
@@ -139,15 +152,26 @@ class MainRanker():
         stopwords = nltk.corpus.stopwords.words('english')
         stemmer = eval('nltk.PorterStemmer()')
         freq_words = nltk.FreqDist()
-        for i in range(self.num_files):
-            # add samples in the file
-            words = self.extract_words(self.gen_filename(self.filename_main, i), False)
-            temp = [w for w in words if (not w in stopwords)]
-            stemmed = [stemmer.stem(w) for w in temp]
-            with_tags = nltk.pos_tag(stemmed)
-            # select words with specific tag
-            selected = [w for (w,t) in with_tags if t == focus]
-            freq_words.update(selected)
+        if self.filename_main == 'all':
+            files = os.listdir('./data')
+            for i in files:
+                words = self.extract_words('./data/' + i)
+                temp = [w for w in words if (not w in stopwords)]
+                stemmed = [stemmer.stem(w) for w in temp]
+                with_tags = nltk.pos_tag(stemmed)
+                # select words with specific tag
+                selected = [w for (w,t) in with_tags if t == focus]
+                freq_words.update(selected)
+        else:
+            for i in range(self.num_files):
+                # add samples in the file
+                words = self.extract_words(self.gen_filename(self.filename_main, i), False)
+                temp = [w for w in words if (not w in stopwords)]
+                stemmed = [stemmer.stem(w) for w in temp]
+                with_tags = nltk.pos_tag(stemmed)
+                # select words with specific tag
+                selected = [w for (w,t) in with_tags if t == focus]
+                freq_words.update(selected)
 
         # sort the frequency list in decending order
         sorted_freq_words = sorted(freq_words.items(),\
@@ -179,16 +203,28 @@ class MainRanker():
         stopwords = nltk.corpus.stopwords.words('english')
         stemmer = eval('nltk.LancasterStemmer()')
         freq_words = nltk.FreqDist()
-        for i in range(self.num_files):
-            # add samples in the file
-            words = self.extract_words(self.gen_filename(self.filename_main, i))
-            words += ngrams(words, n)
-            temp = [w for w in words if (not w in stopwords)]
-            stemmed = [stemmer.stem(w) for w in temp]
-            with_tags = nltk.pos_tag(stemmed)
-            # select words with specific tag
-            selected = [w for (w,t) in with_tags if t.startwith('N')]
-            freq_words.update(selected)
+        if self.filename_main == 'all':
+            files = os.listdir('./data')
+            for i in files:
+                words = self.extract_words('./data/' + i)
+                words += ngrams(words, n)
+                temp = [w for w in words if (not w in stopwords)]
+                stemmed = [stemmer.stem(w) for w in temp]
+                with_tags = nltk.pos_tag(stemmed)
+                # select words with specific tag
+                selected = [w for (w,t) in with_tags if t.startwith('N')]
+                freq_words.update(selected)
+        else:
+            for i in range(self.num_files):
+                # add samples in the file
+                words = self.extract_words(self.gen_filename(self.filename_main, i))
+                words += ngrams(words, n)
+                temp = [w for w in words if (not w in stopwords)]
+                stemmed = [stemmer.stem(w) for w in temp]
+                with_tags = nltk.pos_tag(stemmed)
+                # select words with specific tag
+                selected = [w for (w,t) in with_tags if t.startwith('N')]
+                freq_words.update(selected)
 
         # sort the frequency list in decending order
         sorted_freq_words = sorted(freq_words.items(),\
@@ -221,15 +257,29 @@ class MainRanker():
         freq_words = nltk.FreqDist()
         # use for count the idf of each term
         word_idf = defaultdict(lambda: 0)
-        for i in range(self.num_files):
-            # add samples in the file
-            words = self.extract_words(self.gen_filename(self.filename_main, i))
+        if self.filename_main == 'all':
+            files = os.listdir('./data')
+            for i in files:
+                words = self.extract_words('./data/' + i)
+                temp = [w for w in words if (not w in stopwords)]
+                to_add = [stemmer.stem(w) for w in temp]
+                to_add = [w for w in to_add if not w in to_remove]
+                word_set = set(to_add)
+                freq_words.update(to_add)
 
-            temp = [w for w in words if (not w in stopwords)]
-            to_add = [stemmer.stem(w) for w in temp]
-            to_add = [w for w in to_add if not w in to_remove]
-            word_set = set(to_add)
-            freq_words.update(to_add)
+                # set the idf
+                for word in word_set:
+                    word_idf[word] += 1
+        else:
+            for i in range(self.num_files):
+                # add samples in the file
+                words = self.extract_words(self.gen_filename(self.filename_main, i))
+
+                temp = [w for w in words if (not w in stopwords)]
+                to_add = [stemmer.stem(w) for w in temp]
+                to_add = [w for w in to_add if not w in to_remove]
+                word_set = set(to_add)
+                freq_words.update(to_add)
 
             # set the idf
             for word in word_set:
@@ -276,24 +326,50 @@ class MainRanker():
         freq_words = nltk.FreqDist()
         # use for count the idf of each term
         word_idf = defaultdict(lambda: 0)
+<<<<<<< HEAD
+=======
         for i in range(self.num_files):
             # add samples in the file
 
             words = self.extract_words(self.gen_filename(self.filename_main, i))
+>>>>>>> 50af4b2f418d3c16ea9e80e6a8a6820d37bab142
 
-            temp = [w for w in words if (not w in stopwords)]
-            to_add = [stemmer.stem(w) for w in temp]
-            to_add = [w for w in to_add if not w in to_remove]
+        if self.filename_main == 'all':
+            files = os.listdir('./data')
+            for i in files:
+                words = self.extract_words('./data/' + i)
+                
+                temp = [w for w in words if (not w in stopwords)]
+                to_add = [stemmer.stem(w) for w in temp]
+                to_add = [w for w in to_add if not w in to_remove]
 
-            with_tags = nltk.pos_tag(to_add)
-            to_add = [w for (w, t) in with_tags if t in focus]
+                with_tags = nltk.pos_tag(to_add)
+                to_add = [w for (w, t) in with_tags if t in focus]
 
-            word_set = set(to_add)
-            freq_words.update(to_add)
+                word_set = set(to_add)
+                freq_words.update(to_add)
 
-            # set the idf
-            for word in word_set:
-                word_idf[word] += 1
+                # set the idf
+                for word in word_set:
+                    word_idf[word] += 1
+        else:
+            for i in range(self.num_files):
+                # add samples in the file
+                words = self.extract_words(self.gen_filename(self.filename_main, i))
+
+                temp = [w for w in words if (not w in stopwords)]
+                to_add = [stemmer.stem(w) for w in temp]
+                to_add = [w for w in to_add if not w in to_remove]
+
+                with_tags = nltk.pos_tag(to_add)
+                to_add = [w for (w, t) in with_tags if t in focus]
+
+                word_set = set(to_add)
+                freq_words.update(to_add)
+
+                # set the idf
+                for word in word_set:
+                    word_idf[word] += 1
                 
         # Calculate the idf of each word
         for word in freq_words.keys():
