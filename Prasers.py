@@ -250,7 +250,7 @@ class MainRanker():
                                    )
 
         # display and return the answer
-        print('Applying bag-of-words and stemming and stopword removal with max frequency: ' + str(sorted_freq_words[0][1]))
+        print('max frequency: ' + str(sorted_freq_words[0][1]))
         if mywill_plot:
             freq_words.plot(myhottest)
 
@@ -278,6 +278,7 @@ class MainRanker():
         word_idf = defaultdict(lambda: 0)
         for i in range(self.num_files):
             # add samples in the file
+
             words = self.extract_words(self.gen_filename(self.filename_main, i))
 
             temp = [w for w in words if (not w in stopwords)]
@@ -309,7 +310,7 @@ class MainRanker():
                                    )
 
         # display and return the answer
-        print('Applying bag-of-words and stemming and stopword removal with max frequency: ' + str(sorted_freq_words[0][1]))
+        print('max frequency: ' + str(sorted_freq_words[0][1]))
         if mywill_plot:
             freq_words.plot(myhottest)
 
